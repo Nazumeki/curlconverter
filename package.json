@@ -62,8 +62,10 @@
   "scripts": {
     "compile": "tsc",
     "start": "tsc --watch --preserveWatchOutput -p ./",
+    "preview": "node --watch tools/preview.mjs",
     "pretest": "cross-env TSC_COMPILE_ON_ERROR=true npm run compile || exit 0",
     "test": "cross-env NODE_OPTIONS=\"--enable-source-maps --unhandled-rejections=strict\" npx tape dist/test/test.js",
+    "test:httpx": "npm run compile && node dist/test/httpx.js",
     "coverage": "c8 --check-coverage npm run test",
     "prelint": "npm run compile",
     "lint": "eslint src",

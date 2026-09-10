@@ -102,7 +102,7 @@ Choose the output language by passing `--language <language>`. The options are
 - `perl`
 - `php`, `php-guzzle`, `php-requests`
 - `powershell`, `powershell-webrequest`
-- `python` (the default), `python-http`
+- `python` (the default), `python-http`, `python-httpx`
 - `r`, `r-httr2`
 - `ruby`, `ruby-httparty`
 - `rust`
@@ -138,11 +138,52 @@ curlconverter.toPythonWarn(['curl', 'ftp://example.com']);
 
 If you want to host curlconverter yourself and use it in the browser, it needs two [WASM](https://developer.mozilla.org/en-US/docs/WebAssembly) files to work, `tree-sitter.wasm` and `tree-sitter-bash.wasm`, which it will request from the root directory of your web server. If you are hosting a static website and using Webpack, you need to copy these files from the node_modules/ directory to your server's root directory in order to serve them. You can look at the [webpack.config.js](https://github.com/curlconverter/curlconverter.github.io/blob/2e1722891be22b1bb5c47976fb7873f6eb86b94d/webpack.config.js#L130-L131) for [curlconverter.com](https://curlconverter.com/) to see how this is done. You will also need to set `{module: {experiments: {topLevelAwait: true}}}` in your webpack.config.js.
 
+### Python HTTPX
+
+Use `curlconverter.toPythonHttpx(command)` (or `toPythonHttpxWarn` for
+conversion warnings), or `curlconverter --language python-httpx` on the CLI.
+Install `httpx` in your Python environment to run the generated code.
+
+Like the Requests and http.client templates, the output is a standalone script:
+imports, client creation, extracted variables, and a request through `httpx.Client`. Headers, cookies, query
+parameters, and bodies are assigned only when present. Edit those variables or
+the call arguments directly.
+
+```python
+import httpx
+
+client = httpx.Client(timeout=None)
+
+json_data = {'name': 'updated'}
+
+response = client.request('POST', 'https://example.com', json=json_data)
+```
+
+Extracted cookies are passed explicitly as `cookies=cookies` to `client.request`, and the original Cookie header stays
+commented out in `headers`. The client remains available for further requests;
+call `client.close()` when finished with it.
+The call uses `data=`, `json=`, or `content=` as appropriate for the body.
+When changing body formats, also update `headers` if the
+original Content-Type no longer applies. JSON is reserialized; a warning notes
+that exact bytes require `content=` instead. JSON `null`, duplicate JSON keys,
+and invalid JSON are kept as raw bytes. Queries with interleaved repeated keys
+stay in the URL to preserve order; edit the URL to clear those queries.
+Identical repeated cookies are combined, with a conversion warning. Repeated
+names with conflicting values stay in the Cookie header to preserve their meaning.
+Multipart forms are currently unsupported. Multiple requests use the first
+request and emit a warning, consistent with the Python HTTP client generator.
+
+Run the HTTPX encoder tests with `npm run test:httpx`. Set `PYTHON` to an
+interpreter with `httpx` installed if it is not your default `python`.
+
 ### Usage in VS Code
 
 There's a VS Code extension that adds a "Paste cURL as \<language\>" option to the right-click menu: [https://marketplace.visualstudio.com/items?itemName=curlconverter.curlconverter](https://marketplace.visualstudio.com/items?itemName=curlconverter.curlconverter). It doesn't support the same languages, curl arguments or Bash syntax as the current version because it has to [use an old version of curlconverter](https://github.com/curlconverter/curlconverter-vscode/issues/1).
 
 ## Contributing
+
+For local web preview, CLI examples, and HTTPX transformer tests, see the
+[developer guidebook](./DEVELOPMENT.md).
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md)
 

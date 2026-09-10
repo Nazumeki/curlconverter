@@ -220,6 +220,11 @@ const converters = {
     extension: ".py",
     converter: curlconverter.toPython,
   },
+  "python-httpx": {
+    name: "Python + HTTPX",
+    extension: ".py",
+    converter: curlconverter.toPythonHttpx,
+  },
   r: {
     name: "R",
     extension: ".r",

@@ -215,6 +215,11 @@ import {
   supportedArgs as supportedArgsPythonHttp,
 } from "./generators/python/http.ts";
 import {
+  _toPythonHttpx,
+  toPythonHttpxWarn,
+  supportedArgs as supportedArgsPythonHttpx,
+} from "./generators/python/httpx.ts";
+import {
   _toR,
   toRWarn,
   supportedArgs as supportedArgsR,
@@ -333,6 +338,7 @@ const translate: {
   "powershell-restmethod": [_toPowershellRestMethod, toPowershellRestMethodWarn, supportedArgsPowershellRestMethod], // undocumented alias
   "powershell-webrequest": [_toPowershellWebRequest, toPowershellWebRequestWarn, supportedArgsPowershellWebRequest],
   python: [_toPython, toPythonWarn, supportedArgsPython],
+  "python-httpx": [_toPythonHttpx, toPythonHttpxWarn, supportedArgsPythonHttpx],
   "python-http": [_toPythonHttp, toPythonHttpWarn, supportedArgsPythonHttp],
   "python-httpclient": [_toPythonHttp, toPythonHttpWarn, supportedArgsPythonHttp], // undocumented alias
   r: [_toR, toRWarn, supportedArgsR],
@@ -388,6 +394,7 @@ language: the language to convert the curl command to. The choices are
   powershell-webrequest
   python (the default)
   python-http
+  python-httpx
   r
   r-httr2
   ruby
